@@ -262,23 +262,26 @@ def main():
     import matplotlib.pyplot as plt
     import numpy as np
 
-    pos =np.arange(8)+0.5
-
-    names =["DNS Lookup","TCP Connection","Server Processing","Content Transfer"
-            ,"namelookup","connect","starttransfer","total"]
-
-    plt.barh(pos,(d['range_dns'],d['range_connection'],d['range_server'],d['range_transfer'],
-                  d['time_namelookup'],d['time_connect'],d['time_starttransfer'],d['time_total']),
-                  align='center',color='green')
-
+    if(template == https_template):
+        pos =np.arange(10)+0.5
+        names =["DNS Lookup","TCP Connection","SSL Handshake","Server Processing","Content Transfer"
+                "namelookup","connect","pretransfer","starttransfer","total"]
+        plt.barh(pos,(d['range_dns'],d['range_connection'],d['range_ssl'],d['range_server'],d['range_transfer'],
+                      d['time_namelookup'],d['time_connect'],d['time_pretransfer'],d['time_starttransfer'],d['time_total']),
+                      align='center',color='green')
+    else:
+        pos =np.arange(8)+0.5
+        names =["DNS Lookup","TCP Connection","Server Processing","Content Transfer"
+                ,"namelookup","connect","starttransfer","total"]
+        plt.barh(pos,(d['range_dns'],d['range_connection'],d['range_server'],d['range_transfer'],
+                      d['time_namelookup'],d['time_connect'],d['time_starttransfer'],d['time_total']),
+                      align='center',color='green')
+                      
     plt.xlabel('Speed in ms',color="blue")
     plt.ylabel('Processes',color='blue')
-    plt.title('Speed of Processes',color='blue')
-    
-    plt.tick_params(axis='both',colors='white')
-    
+    plt.title('Speed of Processes',color='blue')    
+    plt.tick_params(axis='both',colors='white')    
     plt.yticks(pos,names)
-
     plt.show()
 
 
