@@ -230,11 +230,21 @@ def main():
     template = '\n'.join(tpl_parts)
 
     def fmta(s):
-        return cyan('{:^7}'.format(str(s) + 'ms'))
+        if(s<100):
+            return green('{:^7}'.format(str(s) + 'ms'))
+        elif(100<s<200):
+            return blue('{:^7}'.format(str(s) + 'ms'))
+        else:
+            return red('{:^7}'.format(str(s) + 'ms'))
 
     def fmtb(s):
-        return cyan('{:<7}'.format(str(s) + 'ms'))
-
+        if(s<100):
+            return green('{:<7}'.format(str(s) + 'ms'))
+        elif(100<s<200):
+            return blue('{:<7}'.format(str(s) + 'ms'))
+        else:
+            return red('{:<7}'.format(str(s) + 'ms'))
+            
     stat = template.format(
         # a
         a0000=fmta(d['range_dns']),
@@ -266,16 +276,27 @@ def main():
         pos =np.arange(10)+0.5
         names =["DNS Lookup","TCP Connection","SSL Handshake","Server Processing","Content Transfer"
                 "namelookup","connect","pretransfer","starttransfer","total"]
-        plt.barh(pos,(d['range_dns'],d['range_connection'],d['range_ssl'],d['range_server'],d['range_transfer'],
+        plot = plt.barh(pos,(d['range_dns'],d['range_connection'],d['range_ssl'],d['range_server'],d['range_transfer'],
                       d['time_namelookup'],d['time_connect'],d['time_pretransfer'],d['time_starttransfer'],d['time_total']),
-                      align='center',color='green')
+                      align='center',color='cyan')
+        for var in list(range(10)):         
+            if plot[var].get_width() < 100:
+                plot[var].set_color('green')
+            elif plot[var].get_width() > 200:
+                plot[var].set_color('red')
+    
     else:
         pos =np.arange(8)+0.5
         names =["DNS Lookup","TCP Connection","Server Processing","Content Transfer"
                 ,"namelookup","connect","starttransfer","total"]
-        plt.barh(pos,(d['range_dns'],d['range_connection'],d['range_server'],d['range_transfer'],
+        plot = plt.barh(pos,(d['range_dns'],d['range_connection'],d['range_server'],d['range_transfer'],
                       d['time_namelookup'],d['time_connect'],d['time_starttransfer'],d['time_total']),
-                      align='center',color='green')
+                      align='center',color='cyan')
+        for var in list(range(8)):         
+            if plot[var].get_width() < 100:
+                plot[var].set_color('green')
+            elif plot[var].get_width() > 200:
+                plot[var].set_color('red')
                       
     plt.xlabel('Speed in ms',color="blue")
     plt.ylabel('Processes',color='blue')
