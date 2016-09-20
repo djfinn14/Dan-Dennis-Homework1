@@ -39,24 +39,26 @@ curl_format = """{
 }"""
 
 https_template = """
-  DNS Lookup   TCP Connection   SSL Handshake   Server Processing   Content Transfer
+  DNS Lookup   TCP Connection   SSL Handshake   Server Processing   Content Transfer   
 [   {a0000}  |     {a0001}    |    {a0002}    |      {a0003}      |      {a0004}     ]
              |                |               |                   |                  |
     namelookup:{b0000}        |               |                   |                  |
                         connect:{b0001}       |                   |                  |
                                     pretransfer:{b0002}           |                  |
-                                                      starttransfer:{b0003}          |
+                                                      starttransfer:{b0003}          |  
                                                                                  total:{b0004}
+            Download Speed:{a0005}   Upload Speed:{b0005}
 """[1:]
 
 http_template = """
-  DNS Lookup   TCP Connection   Server Processing   Content Transfer
+  DNS Lookup   TCP Connection   Server Processing   Content Transfer   
 [   {a0000}  |     {a0001}    |      {a0003}      |      {a0004}     ]
              |                |                   |                  |
     namelookup:{b0000}        |                   |                  |
                         connect:{b0001}           |                  |
                                       starttransfer:{b0003}          |
                                                                  total:{b0004}
+           Download Speed:{a0005}    Upload Speed:{b0005}
 """[1:]
 
 
@@ -176,6 +178,7 @@ def main():
         print('curl result:', p.returncode, grayscale[16](out), grayscale[16](err))
         quit(None, 1)
     for k in d:
+        print(k,d[k])
         if k.startswith('time_'):
             d[k] = int(d[k] * 1000)
 
@@ -244,6 +247,8 @@ def main():
             return blue('{:<7}'.format(str(s) + 'ms'))
         else:
             return red('{:<7}'.format(str(s) + 'ms'))
+    def fmtc(s):
+        return yellow('{:<7}'.format(str(s) + 'KiB'))
             
     stat = template.format(
         # a
@@ -252,12 +257,14 @@ def main():
         a0002=fmta(d['range_ssl']),
         a0003=fmta(d['range_server']),
         a0004=fmta(d['range_transfer']),
+        a0005=fmtc(d['speed_download']/1024),
         # b
         b0000=fmtb(d['time_namelookup']),
         b0001=fmtb(d['time_connect']),
         b0002=fmtb(d['time_pretransfer']),
         b0003=fmtb(d['time_starttransfer']),
         b0004=fmtb(d['time_total']),
+        b0005=fmtc(d['speed_upload']/1024)
     )
     print()
     print(stat)
