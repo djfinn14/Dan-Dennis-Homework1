@@ -34,8 +34,5 @@ Description:
 
 
 Website test:
-   This is a list of website:
-   espn.com
-   www.sina.com
-   www.gentlemonster.com
+   This is a list of website:             espn.com                       www.sina.com                   www.gentlemonster.com
    
