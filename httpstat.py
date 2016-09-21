@@ -1,5 +1,5 @@
-#!/usr/bin/env python
-# coding: utf-8
+###!/usr/bin/env python
+
 # References:
 # man curl
 # https://curl.haxx.se/libcurl/c/curl_easy_getinfo.html
@@ -39,24 +39,24 @@ curl_format = """{
 }"""
 
 https_template = """
-  DNS Lookup   TCP Connection   SSL Handshake   Server Processing   Content Transfer   
+  DNS Lookup   TCP Connection   SSL Handshake   Server Processing   Content Transfer
 [   {a0000}  |     {a0001}    |    {a0002}    |      {a0003}      |      {a0004}     ]
-             |                |               |                   |                  |
-    namelookup:{b0000}        |               |                   |                  |
-                        connect:{b0001}       |                   |                  |
-                                    pretransfer:{b0002}           |                  |
-                                                      starttransfer:{b0003}          |  
+|            |                |               |                   |                  |
+|            |                |               |                   |                  |
+|            |                |               |                   |                  |
+   namelookup:{b0000}  connect:{b0001}  pretransfer:{b0002}       |                  |
+                                                      starttransfer:{b0003}          |
                                                                                  total:{b0004}
             Download Speed:{a0005}   Upload Speed:{b0005}
 """[1:]
 
 http_template = """
-  DNS Lookup   TCP Connection   Server Processing   Content Transfer   
+  DNS Lookup   TCP Connection   Server Processing   Content Transfer
 [   {a0000}  |     {a0001}    |      {a0003}      |      {a0004}     ]
-             |                |                   |                  |
-    namelookup:{b0000}        |                   |                  |
-                        connect:{b0001}           |                  |
-                                      starttransfer:{b0003}          |
+|            |                |                   |                  |
+|            |                |                   |                  |
+|            |                |                   |                  |
+  namelookup:{b0000}  connect:{b0001}   starttransfer:{b0003}        |
                                                                  total:{b0004}
            Download Speed:{a0005}    Upload Speed:{b0005}
 """[1:]
@@ -236,7 +236,7 @@ def main():
         if(s<100):
             return green('{:^7}'.format(str(s) + 'ms'))
         elif(100<s<200):
-            return blue('{:^7}'.format(str(s) + 'ms'))
+            return yello('{:^7}'.format(str(s) + 'ms'))
         else:
             return red('{:^7}'.format(str(s) + 'ms'))
 
@@ -244,12 +244,12 @@ def main():
         if(s<100):
             return green('{:<7}'.format(str(s) + 'ms'))
         elif(100<s<200):
-            return blue('{:<7}'.format(str(s) + 'ms'))
+            return yellow('{:<7}'.format(str(s) + 'ms'))
         else:
             return red('{:<7}'.format(str(s) + 'ms'))
     def fmtc(s):
         return yellow('{:<7}'.format(str(s) + 'KiB'))
-            
+
     stat = template.format(
         # a
         a0000=fmta(d['range_dns']),
@@ -275,7 +275,7 @@ def main():
     if show_speed:
         print('speed_download: {:.1f} KiB, speed_upload: {:.1f} KiB'.format(
             d['speed_download'] / 1024, d['speed_upload'] / 1024))
-            
+
     import matplotlib.pyplot as plt
     import numpy as np
 
@@ -286,12 +286,12 @@ def main():
         plot = plt.barh(pos,(d['range_dns'],d['range_connection'],d['range_ssl'],d['range_server'],d['range_transfer'],
                       d['time_namelookup'],d['time_connect'],d['time_pretransfer'],d['time_starttransfer'],d['time_total']),
                       align='center',color='cyan')
-        for var in list(range(10)):         
+        for var in list(range(10)):
             if plot[var].get_width() < 100:
                 plot[var].set_color('green')
             elif plot[var].get_width() > 200:
                 plot[var].set_color('red')
-    
+
     else:
         pos =np.arange(8)+0.5
         names =["DNS Lookup","TCP Connection","Server Processing","Content Transfer"
@@ -299,16 +299,16 @@ def main():
         plot = plt.barh(pos,(d['range_dns'],d['range_connection'],d['range_server'],d['range_transfer'],
                       d['time_namelookup'],d['time_connect'],d['time_starttransfer'],d['time_total']),
                       align='center',color='cyan')
-        for var in list(range(8)):         
+        for var in list(range(8)):
             if plot[var].get_width() < 100:
                 plot[var].set_color('green')
             elif plot[var].get_width() > 200:
                 plot[var].set_color('red')
-                      
+
     plt.xlabel('Speed in ms',color="blue")
     plt.ylabel('Processes',color='blue')
-    plt.title('Speed of Processes',color='blue')    
-    plt.tick_params(axis='both',colors='white')    
+    plt.title('Speed of Processes',color='blue')
+    plt.tick_params(axis='both',colors='cyan')
     plt.yticks(pos,names)
     plt.show()
 
